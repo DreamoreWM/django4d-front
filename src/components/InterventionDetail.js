@@ -11,13 +11,12 @@ import Color from '@tiptap/extension-color';
 import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
 import html2pdf from 'html2pdf.js';
-import { Document, Page, pdfjs } from 'react-pdf';
+import { pdfjs } from 'react-pdf';
 import { FaFilePdf, FaCamera, FaSignature, FaSave, FaTimes, FaArrowLeft } from 'react-icons/fa'; // Ajout d'icônes
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 const InterventionDetail = () => {
-  const [numPages, setNumPages] = useState(null);
   const { token } = useContext(AuthContext);
   const { id } = useParams();
   const navigate = useNavigate();
@@ -354,7 +353,7 @@ const InterventionDetail = () => {
         <div className="card-body">
           <div className="d-flex flex-wrap gap-3 mb-3">
             {photos.map((photo, index) => (
-              <img
+              <div
                 key={photo.id}
                 src={photo.image}
                 alt={`Photo ${index + 1}`}
@@ -389,13 +388,6 @@ const InterventionDetail = () => {
           {rapportPDF ? (
             <div>
               <p>Rapport généré :</p>
-              <Document
-                file={rapportPDF}
-                onLoadSuccess={({ numPages }) => setNumPages(numPages)}
-                onLoadError={(error) => console.error('Erreur lors du chargement du PDF:', error)}
-              >
-                <Page pageNumber={1} />
-              </Document>
               <p className="mt-3">
                 <a
                   href={rapportPDF}
