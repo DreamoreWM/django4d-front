@@ -1,12 +1,11 @@
-// src/components/Login.js
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 
 const Login = () => {
-  const { setToken, setUser } = useContext(AuthContext);    
+  const { setToken, setUser, token, user } = useContext(AuthContext); // Ajouter token et user pour surveiller leurs changements
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -23,19 +22,26 @@ const Login = () => {
       console.log('Tokens reçus:', { access, refresh });
       setToken(access);
       const decodedUser = jwtDecode(access);
-      setUser(decodedUser); // Met à jour l'utilisateur dans le contexte
+      setUser({ id: decodedUser.user_id }); // Assurez-vous que user contient id
       localStorage.setItem('access_token', access);
       localStorage.setItem('refresh_token', refresh);
       setError('');
-      navigate('/dashboard-employe');
     } catch (err) {
       console.error('Error logging in:', err.response?.data || err.message);
       setError('Identifiants incorrects');
     }
   };
 
+  // Rediriger uniquement lorsque token et user sont définis
+  useEffect(() => {
+    if (token && user) {
+      console.log('Redirection vers dashboard avec token:', token, 'et user:', user);
+      navigate('/dashboard-employe');
+    }
+  }, [token, user, navigate]);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-white">
       {/* Logo SENI */}
       <div className="mb-8">
         <div className="text-center text-red-600 font-bold text-4xl">SENI</div>
