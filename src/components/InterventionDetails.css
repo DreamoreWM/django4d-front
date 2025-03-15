@@ -1,0 +1,32 @@
+/* InterventionDetails.css ou dans une balise <style> */
+.sigCanvas {
+    width: 100%; /* Le canvas prend toute la largeur de son conteneur */
+    max-width: 600px; /* Taille maximale pour les grands écrans */
+    height: 240px; /* Hauteur de base plus grande */
+    border: 1px solid #ccc; /* Bordure pour le canvas */
+    border-radius: 4px; /* Coins arrondis pour le canvas */
+  }
+  
+  /* Conteneur du canvas */
+  .canvas-container {
+    display: flex;
+    justify-content: center; /* Centrer horizontalement */
+    align-items: center; /* Centrer verticalement si nécessaire */
+    width: 100%;
+    max-width: 800px; /* Limiter la largeur du conteneur sur les grands écrans */
+    margin: 0 auto; /* Centrer le conteneur dans la page */
+  }
+  
+  /* Ajustements pour les petits écrans */
+  @media (max-width: 768px) {
+    .sigCanvas {
+      max-width: 100%; /* Sur les petits écrans, le canvas prend toute la largeur disponible */
+      height: 180px; /* Réduire la hauteur sur les petits écrans */
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .sigCanvas {
+      height: 150px; /* Encore plus petit sur les écrans très étroits */
+    }
+  }

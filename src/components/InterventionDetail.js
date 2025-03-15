@@ -13,6 +13,7 @@ import Underline from '@tiptap/extension-underline';
 import html2pdf from 'html2pdf.js';
 import { pdfjs } from 'react-pdf';
 import { FaFilePdf, FaCamera, FaSignature, FaSave, FaTimes, FaArrowLeft } from 'react-icons/fa'; // Ajout d'icônes
+import './InterventionDetails.css';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
@@ -414,23 +415,25 @@ const InterventionDetail = () => {
         </div>
         <div className="card-body">
           <div className="mb-3">
-            <label className="form-label">Signature du locataire</label>
-            <div className="border rounded p-2 bg-light">
-              <SignatureCanvas
-                ref={signatureRef}
-                penColor="black"
-                canvasProps={{ className: 'sigCanvas', width: 500, height: 200 }}
-                onEnd={handleSignatureEnd}
-              />
-            </div>
-            <div className="mt-3 d-flex gap-2">
-              <button className="btn btn-outline-danger" onClick={handleClearSignature}>
-                <FaTimes className="me-2" /> Effacer
-              </button>
-              <button className="btn btn-outline-primary" onClick={handleSaveSignature}>
-                <FaSave className="me-2" /> Sauvegarder
-              </button>
-            </div>
+          <label className="form-label">Signature du locataire</label>
+          <div className="border rounded p-2 bg-light flex justify-center">
+            <SignatureCanvas
+              ref={signatureRef}
+              penColor="black"
+              canvasProps={{
+                className: 'sigCanvas border rounded', // Ajout d'une bordure au canvas
+              }}
+              onEnd={handleSignatureEnd}
+            />
+          </div>
+          <div className="mt-3 d-flex gap-2">
+            <button className="btn btn-outline-danger" onClick={handleClearSignature}>
+              <FaTimes className="me-2" /> Effacer
+            </button>
+            <button className="btn btn-outline-primary" onClick={handleSaveSignature}>
+              <FaSave className="me-2" /> Sauvegarder
+            </button>
+          </div>
             {signature && (
               <div className="mt-3">
                 <p>Signature enregistrée :</p>
