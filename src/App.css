@@ -36,3 +36,122 @@
     transform: rotate(360deg);
   }
 }
+
+/* src/App.css */
+.app-container {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #f8f9fa;
+  transition: transform 0.3s ease-in-out;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  z-index: 1000;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+  transform: translateX(-100%); /* Cachée par défaut */
+}
+
+.sidebar.open {
+  transform: translateX(0); /* Visible quand ouverte */
+}
+
+.sidebar-header {
+  padding: 1rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.sidebar-nav {
+  padding: 1rem;
+}
+
+.nav-link {
+  display: block;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  color: #333;
+}
+
+.nav-link.active {
+  background-color: #e9ecef;
+  border-radius: 4px;
+}
+
+.main-content {
+  flex: 1;
+  transition: margin-left 0.3s ease-in-out;
+  width: 100%;
+}
+
+.burger-btn {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1001;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* Desktop */
+@media (min-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%); /* Cachée par défaut */
+  }
+
+  .sidebar.open {
+    transform: translateX(0); /* Visible quand ouverte */
+  }
+
+  .main-content {
+    margin-left: 0; /* Pas de marge par défaut */
+  }
+
+  .main-content.sidebar-open {
+    margin-left: 250px; /* Décalage quand sidebar ouverte */
+  }
+
+  .burger-btn {
+    display: block;
+  }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .sidebar {
+    width: 200px;
+    transform: translateX(-100%);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+
+  .burger-btn {
+    display: block;
+  }
+}
+
+/* Styles spécifiques à la page Login pour éviter les conflits */
+.min-h-screen {
+  min-height: 100vh;
+}
