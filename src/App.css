@@ -54,11 +54,11 @@
   height: 100%;
   z-index: 1000;
   box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-  transform: translateX(-100%); /* Cachée par défaut */
+  transform: translateX(-100%);
 }
 
 .sidebar.open {
-  transform: translateX(0); /* Visible quand ouverte */
+  transform: translateX(0);
 }
 
 .sidebar-header {
@@ -87,6 +87,7 @@
   flex: 1;
   transition: margin-left 0.3s ease-in-out;
   width: 100%;
+  padding-top: 60px; /* Ajout d'une marge en haut pour éviter le chevauchement */
 }
 
 .burger-btn {
@@ -101,6 +102,7 @@
   padding: 0.5rem;
 }
 
+/* Bouton de fermeture dans la sidebar */
 .close-btn {
   background: none;
   border: none;
@@ -111,19 +113,19 @@
 /* Desktop */
 @media (min-width: 768px) {
   .sidebar {
-    transform: translateX(-100%); /* Cachée par défaut */
+    transform: translateX(-100%);
   }
 
   .sidebar.open {
-    transform: translateX(0); /* Visible quand ouverte */
+    transform: translateX(0);
   }
 
   .main-content {
-    margin-left: 0; /* Pas de marge par défaut */
+    margin-left: 0;
   }
 
   .main-content.sidebar-open {
-    margin-left: 250px; /* Décalage quand sidebar ouverte */
+    margin-left: 250px;
   }
 
   .burger-btn {
