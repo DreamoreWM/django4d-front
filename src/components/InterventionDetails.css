@@ -1,32 +1,125 @@
-/* InterventionDetails.css ou dans une balise <style> */
+/* src/components/InterventionDetails.css */
 .sigCanvas {
-    width: 100%; /* Le canvas prend toute la largeur de son conteneur */
-    max-width: 600px; /* Taille maximale pour les grands écrans */
-    height: 240px; /* Hauteur de base plus grande */
-    border: 1px solid #ccc; /* Bordure pour le canvas */
-    border-radius: 4px; /* Coins arrondis pour le canvas */
+  width: 100%;
+  max-width: 600px;
+  height: 240px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.canvas-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.card {
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+}
+
+.card-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 1rem;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+h3 {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+p {
+  margin-bottom: 0.5rem;
+}
+
+.btn-danger {
+  background-color: #CA2A19;
+  border-color: #CA2A19;
+}
+
+.btn-danger:hover {
+  background-color: #b02416;
+  border-color: #b02416;
+}
+
+.btn-outline-primary {
+  border-color: #003087;
+  color: #003087;
+}
+
+.btn-outline-primary:hover {
+  background-color: #003087;
+  color: white;
+}
+
+.btn-outline-danger {
+  border-color: #CA2A19;
+  color: #CA2A19;
+}
+
+.btn-outline-danger:hover {
+  background-color: #CA2A19;
+  color: white;
+}
+
+.list-unstyled li {
+  margin-bottom: 0.5rem;
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.list-unstyled li:before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #CA2A19;
+  font-size: 1.2rem;
+}
+
+/* Ajustements pour les petits écrans */
+@media (max-width: 768px) {
+  .sigCanvas {
+    max-width: 100%;
+    height: 180px;
   }
-  
-  /* Conteneur du canvas */
-  .canvas-container {
-    display: flex;
-    justify-content: center; /* Centrer horizontalement */
-    align-items: center; /* Centrer verticalement si nécessaire */
+
+  .card-body {
+    padding: 1rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+  }
+
+  .btn {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .sigCanvas {
+    height: 150px;
+  }
+
+  .d-flex.gap-3 {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .btn {
     width: 100%;
-    max-width: 800px; /* Limiter la largeur du conteneur sur les grands écrans */
-    margin: 0 auto; /* Centrer le conteneur dans la page */
   }
-  
-  /* Ajustements pour les petits écrans */
-  @media (max-width: 768px) {
-    .sigCanvas {
-      max-width: 100%; /* Sur les petits écrans, le canvas prend toute la largeur disponible */
-      height: 180px; /* Réduire la hauteur sur les petits écrans */
-    }
-  }
-  
-  @media (max-width: 576px) {
-    .sigCanvas {
-      height: 150px; /* Encore plus petit sur les écrans très étroits */
-    }
-  }
+}

@@ -1,3 +1,4 @@
+// src/components/InterventionDetail.js
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
@@ -12,7 +13,7 @@ import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
 import html2pdf from 'html2pdf.js';
 import { pdfjs } from 'react-pdf';
-import { FaFilePdf, FaCamera, FaSignature, FaSave, FaTimes, FaArrowLeft } from 'react-icons/fa'; // Ajout d'icônes
+import { FaFilePdf, FaCamera, FaSignature, FaSave, FaTimes, FaArrowLeft } from 'react-icons/fa';
 import './InterventionDetails.css';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
@@ -39,9 +40,9 @@ const InterventionDetail = () => {
       Color,
       Underline,
     ],
-    content: description,
+    content: '', // Contenu initial vide
     onUpdate: ({ editor }) => {
-      setDescription(editor.getHTML());
+      setDescription(editor.getHTML()); // Mettre à jour l'état description à chaque changement
     },
   });
 
@@ -54,8 +55,14 @@ const InterventionDetail = () => {
         setIntervention(response.data);
         setPhotos(response.data.photos || []);
         setSignature(response.data.signature || null);
-        setDescription(response.data.description || '');
         setRapportPDF(response.data.rapport_pdf || null);
+
+        // Pré-remplir la description
+        const initialDescription = response.data.description || '';
+        setDescription(initialDescription);
+        if (editor && initialDescription) {
+          editor.commands.setContent(initialDescription);
+        }
       } catch (err) {
         console.error('Error fetching intervention:', err);
         setError('Erreur lors de la récupération des détails de l’intervention');
@@ -122,21 +129,13 @@ const InterventionDetail = () => {
         <div style="font-size: 14px; min-height: 50px; color: #666;">${description || 'Non défini'}</div>
       </div>
   
-      <div style="display: flex; justify-content: space-between; border: 1px solid #ddd; padding: 15px; background-color: #f9f9f9; border-radius: 5px;">
-        <div style="width: 48%;">
+      <div style="border: 1px solid #ddd; padding: 15px; background-color: #f9f9f9; border-radius: 5px;">
+        <div style="width: 100%;">
           <p style="font-size: 16px; font-weight: bold; margin: 0 0 10px 0; color: #CA2A19;">
             NOM ET SIGNATURE DU LOCATAIRE
           </p>
           <div style="min-height: 50px;">
             ${signature ? `<img src="${signature}" style="width: 150px; height: auto;" crossorigin="anonymous" />` : 'Non disponible'}
-          </div>
-        </div>
-        <div style="width: 48%;">
-          <p style="font-size: 16px; font-weight: bold; margin: 0 0 10px 0; color: #CA2A19;">
-            NOM ET SIGNATURE DU TECHNICIEN
-          </p>
-          <div style="min-height: 50px;">
-            Non implémenté
           </div>
         </div>
       </div>
@@ -202,42 +201,57 @@ const InterventionDetail = () => {
       interventionFormData.append('signature', blob, 'signature.png');
     }
 
-    if (description) {
-      interventionFormData.append('description', description);
-    }
+    // Toujours envoyer la description, même si elle est vide
+    interventionFormData.append('description', description || '');
 
     try {
-      if (signatureChanged || description) {
-        await axios.patch(`https://django4d-1.onrender.com/api/interventions/${id}/`, interventionFormData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-      }
-
-      if (newPhotos.length > 0) {
-        for (const photo of newPhotos) {
-          const photoFormData = new FormData();
-          photoFormData.append('image', photo);
-          await axios.post(`https://django4d-1.onrender.com/api/interventions/${id}/photos/`, photoFormData, {
+      // Mettre à jour l'intervention avec la description et la signature (si modifiée)
+      if (signatureChanged || description !== intervention.description) {
+        const response = await axios.patch(
+          `https://django4d-1.onrender.com/api/interventions/${id}/`,
+          interventionFormData,
+          {
             headers: {
               Authorization: `Bearer ${token}`,
               'Content-Type': 'multipart/form-data',
             },
-          });
+          }
+        );
+        console.log('Intervention mise à jour:', response.data);
+      }
+
+      // Ajouter les nouvelles photos si elles existent
+      if (newPhotos.length > 0) {
+        for (const photo of newPhotos) {
+          const photoFormData = new FormData();
+          photoFormData.append('image', photo);
+          await axios.post(
+            `https://django4d-1.onrender.com/api/interventions/${id}/photos/`,
+            photoFormData,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data',
+              },
+            }
+          );
         }
       }
 
+      // Générer et envoyer le PDF
       const generatedPDF = await generatePDF();
       const pdfFormData = new FormData();
       pdfFormData.append('rapport_pdf', generatedPDF);
-      await axios.patch(`https://django4d-1.onrender.com/api/interventions/${id}/`, pdfFormData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      await axios.patch(
+        `https://django4d-1.onrender.com/api/interventions/${id}/`,
+        pdfFormData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
 
       setSuccess(true);
       setError(null);
@@ -255,9 +269,14 @@ const InterventionDetail = () => {
 
   return (
     <div className="container mt-5" style={{ fontFamily: "'Roboto', sans-serif" }}>
-      <h2 className="mb-4" style={{ color: '#003087', fontWeight: 'bold' }}>
-        Intervention #{id}
-      </h2>
+      <div className="d-flex align-items-center mb-4">
+        <button className="btn btn-outline-secondary me-3" onClick={() => navigate('/dashboard-employe')}>
+          <FaArrowLeft />
+        </button>
+        <h2 className="mb-0" style={{ color: '#003087', fontWeight: 'bold' }}>
+          Intervention #{id}
+        </h2>
+      </div>
       {success && (
         <div className="alert alert-success" role="alert">
           Modifications enregistrées ! Redirection dans quelques secondes...
@@ -266,9 +285,9 @@ const InterventionDetail = () => {
 
       {/* Section Détails */}
       <div className="card mb-4 shadow-sm border-0">
-        <div className="card-header bg-light text-dark">
+        <div className="card-header bg-light text-dark d-flex justify-content-between align-items-center">
           <h3 className="mb-0" style={{ color: '#CA2A19' }}>
-            <FaFilePdf className="me-2" /> Détails de l'intervention
+            Détails de l'intervention
           </h3>
         </div>
         <div className="card-body">
@@ -284,7 +303,21 @@ const InterventionDetail = () => {
               <p><strong>Type :</strong> {intervention?.type_intervention || 'Non défini'}</p>
             </div>
           </div>
-          <h4 className="mt-4" style={{ color: '#CA2A19' }}>Description</h4>
+
+          {/* Description du bon de commande (Commentaire) - Non modifiable */}
+          <h4 className="mt-4" style={{ color: '#CA2A19' }}>Commentaire (Bon de commande)</h4>
+          <div className="border p-3 rounded bg-light">
+            <div
+              className="text-muted"
+              style={{ minHeight: '100px', overflowY: 'auto' }}
+              dangerouslySetInnerHTML={{
+                __html: intervention?.bon_de_commande?.commentaire || 'Aucun commentaire disponible.',
+              }}
+            />
+          </div>
+
+          {/* Description de l'intervention - Modifiable */}
+          <h4 className="mt-4" style={{ color: '#CA2A19' }}>Description de l'intervention</h4>
           {editor && (
             <div className="border p-3 rounded bg-light">
               <div className="btn-group mb-3">
@@ -344,68 +377,6 @@ const InterventionDetail = () => {
         </div>
       </div>
 
-      {/* Section Photos */}
-      <div className="card mb-4 shadow-sm border-0">
-        <div className="card-header bg-light text-dark">
-          <h3 className="mb-0" style={{ color: '#CA2A19' }}>
-            <FaCamera className="me-2" /> Photos
-          </h3>
-        </div>
-        <div className="card-body">
-          <div className="d-flex flex-wrap gap-3 mb-3">
-            {photos.map((photo, index) => (
-              <div
-                key={photo.id}
-                src={photo.image}
-                alt={`Photo ${index + 1}`}
-                className="img-thumbnail rounded"
-                style={{ maxWidth: '150px', maxHeight: '150px', objectFit: 'cover' }}
-              />
-            ))}
-          </div>
-          <div className="mb-3">
-            <label htmlFor="newPhotos" className="form-label">Ajouter des photos</label>
-            <input
-              type="file"
-              className="form-control"
-              id="newPhotos"
-              accept="image/*"
-              capture="environment"
-              multiple
-              onChange={handleAddPhotos}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Section Rapport PDF */}
-      <div className="card mb-4 shadow-sm border-0">
-        <div className="card-header bg-light text-dark">
-          <h3 className="mb-0" style={{ color: '#CA2A19' }}>
-            <FaFilePdf className="me-2" /> Rapport PDF
-          </h3>
-        </div>
-        <div className="card-body">
-          {rapportPDF ? (
-            <div>
-              <p>Rapport généré :</p>
-              <p className="mt-3">
-                <a
-                  href={rapportPDF}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-outline-primary"
-                >
-                  <FaFilePdf className="me-2" /> Télécharger le rapport
-                </a>
-              </p>
-            </div>
-          ) : (
-            <p className="text-muted">Aucun rapport généré pour le moment.</p>
-          )}
-        </div>
-      </div>
-
       {/* Section Signature */}
       <div className="card mb-4 shadow-sm border-0">
         <div className="card-header bg-light text-dark">
@@ -415,25 +386,25 @@ const InterventionDetail = () => {
         </div>
         <div className="card-body">
           <div className="mb-3">
-          <label className="form-label">Signature du locataire</label>
-          <div className="border rounded p-2 bg-light flex justify-center">
-            <SignatureCanvas
-              ref={signatureRef}
-              penColor="black"
-              canvasProps={{
-                className: 'sigCanvas border rounded', // Ajout d'une bordure au canvas
-              }}
-              onEnd={handleSignatureEnd}
-            />
-          </div>
-          <div className="mt-3 d-flex gap-2">
-            <button className="btn btn-outline-danger" onClick={handleClearSignature}>
-              <FaTimes className="me-2" /> Effacer
-            </button>
-            <button className="btn btn-outline-primary" onClick={handleSaveSignature}>
-              <FaSave className="me-2" /> Sauvegarder
-            </button>
-          </div>
+            <label className="form-label">Signature du locataire</label>
+            <div className="border rounded p-2 bg-light canvas-container">
+              <SignatureCanvas
+                ref={signatureRef}
+                penColor="black"
+                canvasProps={{
+                  className: 'sigCanvas',
+                }}
+                onEnd={handleSignatureEnd}
+              />
+            </div>
+            <div className="mt-3 d-flex gap-2">
+              <button className="btn btn-outline-danger" onClick={handleClearSignature}>
+                <FaTimes className="me-2" /> Effacer
+              </button>
+              <button className="btn btn-outline-primary" onClick={handleSaveSignature}>
+                <FaSave className="me-2" /> Sauvegarder
+              </button>
+            </div>
             {signature && (
               <div className="mt-3">
                 <p>Signature enregistrée :</p>
@@ -451,11 +422,11 @@ const InterventionDetail = () => {
 
       {/* Boutons d'action */}
       <div className="d-flex gap-3 justify-content-end mb-5">
-        <button className="btn btn-primary" onClick={handleSubmit}>
+        <button className="btn btn-danger" onClick={handleSubmit}>
           <FaSave className="me-2" /> Valider
         </button>
         <button className="btn btn-outline-secondary" onClick={() => navigate('/dashboard-employe')}>
-          <FaArrowLeft className="me-2" /> Retour
+          Absent
         </button>
       </div>
     </div>
