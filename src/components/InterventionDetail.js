@@ -85,7 +85,7 @@ const InterventionDetail = () => {
     element.style.padding = '20px';
     element.style.fontFamily = "'Roboto', sans-serif";
     element.style.width = '190mm';
-    element.style.minHeight = '297mm';
+    element.style.minHeight = 'auto';
     element.style.boxSizing = 'border-box';
     element.style.backgroundColor = '#fff';
     element.style.color = '#333';
@@ -417,6 +417,34 @@ const InterventionDetail = () => {
               </div>
             )}
           </div>
+        </div>
+      </div>
+
+            {/* Section Rapport PDF */}
+            <div className="card mb-4 shadow-sm border-0">
+        <div className="card-header bg-light text-dark">
+          <h3 className="mb-0" style={{ color: '#CA2A19' }}>
+            <FaFilePdf className="me-2" /> Rapport PDF
+          </h3>
+        </div>
+        <div className="card-body">
+          {rapportPDF ? (
+            <div>
+              <p>Rapport généré :</p>
+              <p className="mt-3">
+                <a
+                  href={rapportPDF}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-outline-primary"
+                >
+                  <FaFilePdf className="me-2" /> Télécharger le rapport
+                </a>
+              </p>
+            </div>
+          ) : (
+            <p className="text-muted">Aucun rapport généré pour le moment.</p>
+          )}
         </div>
       </div>
 
