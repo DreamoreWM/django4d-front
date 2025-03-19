@@ -87,7 +87,7 @@
   flex: 1;
   transition: margin-left 0.3s ease-in-out;
   width: 100%;
-  padding-top: 60px; /* Ajout d'une marge en haut pour éviter le chevauchement */
+  padding-top: 60px; /* Espace pour le bouton burger */
 }
 
 .burger-btn {
@@ -102,7 +102,6 @@
   padding: 0.5rem;
 }
 
-/* Bouton de fermeture dans la sidebar */
 .close-btn {
   background: none;
   border: none;
@@ -146,10 +145,80 @@
 
   .main-content {
     margin-left: 0;
+    padding-top: 80px; /* Plus d'espace en haut pour éviter le chevauchement */
   }
 
   .burger-btn {
     display: block;
+  }
+}
+
+/* Très petits écrans (ajout d'un breakpoint spécifique) */
+@media (max-width: 400px) {
+  .main-content {
+    padding-top: 90px; /* Encore plus d'espace pour éviter le chevauchement */
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  /* Ajuster la disposition des éléments dans le dashboard */
+  .container {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  h2.text-danger {
+    font-size: 1.5rem; /* Réduire la taille du titre */
+    margin-bottom: 0.5rem;
+  }
+
+  h3.text-primary {
+    font-size: 1.2rem; /* Réduire la taille de la date */
+  }
+
+  .d-flex.align-items-center.justify-content-between {
+    flex-direction: column; /* Empiler les éléments verticalement */
+    gap: 0.5rem; /* Espacement entre les éléments */
+  }
+
+  .btn-outline-secondary {
+    font-size: 0.8rem; /* Réduire la taille des boutons Précédent/Suivant */
+    padding: 0.25rem 0.5rem;
+  }
+
+  .form-control {
+    font-size: 0.8rem; /* Réduire la taille de l'input de date */
+    max-width: 150px !important;
+  }
+
+  .card-body.d-flex {
+    flex-direction: column; /* Empiler les éléments de la carte verticalement */
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .card-text {
+    font-size: 0.9rem; /* Réduire la taille du texte */
+  }
+
+  .ms-auto.d-flex {
+    flex-wrap: wrap; /* Permettre aux boutons de passer à la ligne si nécessaire */
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .btn-outline-danger,
+  .btn-danger {
+    font-size: 0.8rem; /* Réduire la taille des boutons */
+    padding: 0.25rem 0.5rem;
+  }
+
+  .text-success.me-2 {
+    font-size: 0.8rem; /* Réduire la taille de l'icône et texte "Validé" */
+  }
+
+  .bi-check-circle-fill {
+    font-size: 1rem !important; /* Réduire la taille de l'icône */
   }
 }
 
